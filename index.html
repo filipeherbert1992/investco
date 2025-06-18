@@ -1,0 +1,363 @@
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InvestCo Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <script type="importmap">
+    {
+      "imports": {
+        "chart.js": "https://cdn.jsdelivr.net/npm/chart.js/dist/chart.js",
+        "feather-icons": "https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js",
+        "./api.js": "./js/api.js",
+        "./auth.js": "./js/auth.js",
+        "./chart.js": "./js/chart.js",
+        "./dom.js": "./js/dom.js",
+        "./handlers.js": "./js/handlers.js",
+        "./ui.js": "./js/ui.js",
+        "./utils.js": "./js/utils.js"
+      }
+    }
+    </script>
+    <!-- Auth Container -->
+    <div id="auth-container">
+        <div class="auth-form-container">
+            <div class="auth-tabs">
+                <button id="user-tab" class="auth-tab active" data-form="login-form">Usuário</button>
+                <button id="admin-tab" class="auth-tab" data-form="login-form">Admin</button>
+            </div>
+            <!-- Login Form -->
+            <form id="login-form">
+                <h2 id="login-title">Login</h2>
+                <p id="login-subtitle">Acesse sua conta para ver seu dashboard.</p>
+                <div class="input-group">
+                    <label for="login-username">Nome de Usuário</label>
+                    <input type="text" id="login-username" name="username" required>
+                </div>
+                <div class="input-group">
+                    <label for="login-password">Senha</label>
+                    <input type="password" id="login-password" name="password" required>
+                </div>
+                 <div id="login-error" class="error-message"></div>
+                <button type="submit">Entrar</button>
+                <p class="toggle-form" id="toggle-register-p">Não tem uma conta? <a href="#" id="show-register">Cadastre-se</a></p>
+            </form>
+
+            <!-- Registration Form -->
+            <form id="register-form" class="hidden">
+                <h2>Cadastro</h2>
+                <p>Crie uma nova conta.</p>
+                <div class="input-group">
+                    <label for="register-fullname">Nome Completo</label>
+                    <input type="text" id="register-fullname" required>
+                </div>
+                <div class="input-group">
+                    <label for="register-username">Nome de Usuário</label>
+                    <input type="text" id="register-username" required>
+                </div>
+                 <div class="input-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" required>
+                </div>
+                <div class="input-group">
+                    <label for="register-password">Senha</label>
+                    <input type="password" id="register-password" required>
+                </div>
+                <div id="register-error" class="error-message"></div>
+                <button type="submit">Cadastrar</button>
+                <p class="toggle-form">Já tem uma conta? <a href="#" id="show-login">Faça Login</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Container -->
+    <div id="dashboard-container" class="hidden">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="logo.png" alt="InvestCo Logo" class="logo">
+                <h1>InvestCo</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li id="admin-nav-item" class="hidden"><a href="#" data-page="admin"><i data-feather="users"></i><span>Admin</span></a></li>
+                    <li id="approvals-nav-item" class="hidden"><a href="#" data-page="approvals"><i data-feather="check-square"></i><span>Aprovações</span></a></li>
+                    <li id="dist-lucro-nav-item" class="hidden"><a href="#" data-page="distribuicao-lucro"><i data-feather="dollar-sign"></i><span>Distribuição de Lucro</span></a></li>
+                    <li class="active"><a href="#" data-page="dashboard"><i data-feather="grid"></i><span>Dashboard</span></a></li>
+                    <li><a href="#" data-page="perfil"><i data-feather="user"></i><span>Perfil de Usuário</span></a></li>
+                    <li><a href="#" data-page="deposito"><i data-feather="arrow-down-circle"></i><span>Depósito</span></a></li>
+                    <li><a href="#" data-page="saque"><i data-feather="arrow-up-circle"></i><span>Saque</span></a></li>
+                    <li><a href="#" data-page="historico"><i data-feather="clock"></i><span>Histórico</span></a></li>
+                    <li id="logout-btn"><a href="#"><i data-feather="log-out"></i><span>Sair</span></a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                 <img src="/a/e262dfe0-b0ca-4296-ae29-011014b07dd0" alt="User Avatar" class="user-avatar">
+            </div>
+        </aside>
+        <main class="main-content">
+            <!-- Page Content Wrapper -->
+            <div id="page-content-wrapper">
+
+                <!-- Dashboard Page -->
+                <div id="page-dashboard" class="page-content">
+                    <header>
+                        <h2>Dashboard</h2>
+                        <p id="welcome-message">Bem-vindo de volta, !</p>
+                    </header>
+                    <div class="cards-container">
+                        <div class="card">
+                            <p>Valor Investido</p>
+                            <h3 id="valor-investido">R$ 0,00</h3>
+                        </div>
+                        <div class="card">
+                            <p>Saldo Atual</p>
+                            <h3 id="saldo-atual">R$ 0,00</h3>
+                        </div>
+                        <div class="card">
+                            <p>Saldo Disponível</p>
+                            <h3 id="saldo-disponivel">R$ 0,00</h3>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <p>Evolução do Patrimônio</p>
+                        <canvas id="patrimonio-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Admin Page -->
+                <div id="page-admin" class="page-content hidden">
+                    <header>
+                        <h2>Painel Administrativo</h2>
+                        <p>Visão geral de todos os usuários cadastrados.</p>
+                    </header>
+                    <div class="card">
+                         <div class="history-table-container">
+                            <table id="admin-users-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nome Completo</th>
+                                        <th>Nome de Usuário</th>
+                                        <th>Email</th>
+                                        <th>Valor Investido</th>
+                                        <th>Saldo Atual</th>
+                                        <th>Saldo Disponível</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Admin user rows will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Approvals Page (Admin) -->
+                <div id="page-approvals" class="page-content hidden">
+                    <header>
+                        <h2>Aprovações Pendentes</h2>
+                        <p>Aprove ou rejeite depósitos e saques dos usuários.</p>
+                    </header>
+                    <div class="card">
+                         <div class="history-table-container">
+                            <table id="approvals-table">
+                                <thead>
+                                    <tr>
+                                        <th>Usuário</th>
+                                        <th>Data</th>
+                                        <th>Tipo</th>
+                                        <th>Valor</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Pending transaction rows will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Page -->
+                <div id="page-perfil" class="page-content hidden">
+                    <header>
+                        <h2>Perfil de Usuário</h2>
+                        <p>Atualize suas informações pessoais.</p>
+                    </header>
+                    <div class="card">
+                        <form id="profile-form">
+                            <div class="input-group">
+                                <label for="profile-fullname">Nome Completo</label>
+                                <input type="text" id="profile-fullname" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="profile-username">Nome de Usuário (não pode ser alterado)</label>
+                                <input type="text" id="profile-username" disabled>
+                            </div>
+                            <div class="input-group">
+                                <label for="profile-email">Email</label>
+                                <input type="email" id="profile-email" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="profile-password">Nova Senha (deixe em branco para não alterar)</label>
+                                <input type="password" id="profile-password">
+                            </div>
+                            <div id="profile-success" class="success-message"></div>
+                            <button type="submit">Salvar Alterações</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Admin Edit User Page -->
+                <div id="page-admin-edit-user" class="page-content hidden">
+                    <header>
+                        <h2>Editar Usuário</h2>
+                        <p id="admin-edit-user-subtitle">Modifique as informações do usuário abaixo.</p>
+                    </header>
+                    <div class="card">
+                        <form id="admin-edit-user-form">
+                            <div class="input-group">
+                                <label for="admin-edit-fullname">Nome Completo</label>
+                                <input type="text" id="admin-edit-fullname" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="admin-edit-username">Nome de Usuário (não pode ser alterado)</label>
+                                <input type="text" id="admin-edit-username" disabled>
+                            </div>
+                            <div class="input-group">
+                                <label for="admin-edit-email">Email</label>
+                                <input type="email" id="admin-edit-email" required>
+                            </div>
+                            <div class="financial-inputs-grid">
+                                <div class="input-group">
+                                    <label for="admin-edit-valorInvestido">Valor Investido (R$)</label>
+                                    <input type="number" id="admin-edit-valorInvestido" min="0" step="any" required placeholder="0,00">
+                                </div>
+                                <div class="input-group">
+                                    <label for="admin-edit-saldoAtual">Saldo Atual (R$)</label>
+                                    <input type="number" id="admin-edit-saldoAtual" min="0" step="any" required placeholder="0,00">
+                                </div>
+                                <div class="input-group">
+                                    <label for="admin-edit-saldoDisponivel">Saldo Disponível (R$)</label>
+                                    <input type="number" id="admin-edit-saldoDisponivel" min="0" step="any" required placeholder="0,00">
+                                </div>
+                            </div>
+                            <div id="admin-edit-success" class="success-message"></div>
+                            <div class="form-actions">
+                                <button type="submit">Salvar Alterações</button>
+                                <button type="button" id="admin-edit-back-btn" class="btn-secondary">Voltar para a Lista</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Profit Distribution Page -->
+                <div id="page-distribuicao-lucro" class="page-content hidden">
+                    <header>
+                        <h2>Distribuição de Lucro</h2>
+                        <p>Distribua lucros para os usuários com base em uma porcentagem do saldo atual.</p>
+                    </header>
+                    <div class="card">
+                        <form id="profit-distribution-form">
+                            <div class="input-group">
+                                <label for="profit-percentage">Porcentagem de Lucro (%)</label>
+                                <input type="number" id="profit-percentage" min="0.01" step="any" required placeholder="Ex: 1.5">
+                            </div>
+                            <div class="input-group">
+                                <label>Distribuir Para</label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="target-users" value="all" checked> Todos os Usuários</label>
+                                    <label><input type="radio" name="target-users" value="specific"> Usuários Específicos</label>
+                                </div>
+                            </div>
+                            <div id="specific-users-list-container" class="hidden">
+                                <label>Selecione os Usuários</label>
+                                <div id="specific-users-list" class="user-checkbox-list">
+                                    <!-- User checkboxes will be inserted here by JS -->
+                                </div>
+                            </div>
+                             <div id="profit-dist-message" class="message"></div>
+                            <button type="submit">Distribuir Lucro</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Deposit Page -->
+                <div id="page-deposito" class="page-content hidden">
+                    <header>
+                        <h2>Depósito</h2>
+                        <p>Adicione fundos à sua conta.</p>
+                    </header>
+                    <div class="card">
+                        <form id="deposit-form">
+                            <div class="input-group">
+                                <label for="deposit-amount">Valor do Depósito (R$)</label>
+                                <input type="number" id="deposit-amount" min="0.01" step="any" required placeholder="0,00">
+                            </div>
+                            <div id="deposit-message" class="success-message"></div>
+                            <button type="submit">Confirmar Depósito</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Withdrawal Page -->
+                <div id="page-saque" class="page-content hidden">
+                    <header>
+                        <h2>Saque</h2>
+                        <p>Retire fundos da sua conta.</p>
+                    </header>
+                    <div class="card">
+                        <form id="withdraw-form">
+                            <div class="form-info-box">
+                                <span>Saldo Disponível para Saque</span>
+                                <span id="withdraw-available-balance">R$ 0,00</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="withdraw-amount">Valor do Saque (R$)</label>
+                                <input type="number" id="withdraw-amount" min="0.01" step="any" required placeholder="0,00">
+                            </div>
+                            <div id="withdraw-message" class="message"></div>
+                            <button type="submit">Confirmar Saque</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- History Page -->
+                <div id="page-historico" class="page-content hidden">
+                    <header>
+                        <h2>Histórico</h2>
+                        <p>Veja suas transações recentes.</p>
+                    </header>
+                    <div class="card">
+                        <div class="history-table-container">
+                            <table id="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Tipo</th>
+                                        <th>Valor</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Rows will be inserted here by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
